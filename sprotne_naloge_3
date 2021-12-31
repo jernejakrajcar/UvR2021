@@ -1,0 +1,174 @@
+1. Zapišite ukaz v zbirniku za procesor ARM, ki v register R1 naloži konstanto 128. 
+Uporabite takojšnje naslavljanje (ukaz MOV). Izpišite ustrezen strojni ukaz 
+(32 – bitno število v šestnajstiški obliki). Program izvajajte po korakih in opazujte vrednosti 
+registrov r15(PC) in R1. Kakšni sta njuni vrednosti na koncu programa?
+
+          .text
+
+          .align
+          .global __start
+__start:
+              
+          mov r1, #0x80
+__end:    b __end   
+
+
+Na koncu programa sta vrednosti r1 = 128, r15 = 36.
+
+----------------------------------------------------------------------------------------------------------------
+
+2. Zapišite ukaz(e) v zbirniku za procesor ARM, ki v register naloži vrednost spremenljivke:
+
+a) naloži 32-bitno vrednost 0x12345678 v register R1
+
+          .text
+
+STEV1:    .word 0x12345678
+
+          .align
+          .global __start
+__start:
+              
+          adr r0, STEV1
+          ldr r1, [r0]
+          
+__end:    b __end  
+
+b) naloži 8-bitno vrednost 128 v register R1.
+
+          .text
+
+STEV1:    .byte 128
+
+          .align
+          .global __start
+__start:
+              
+          adr r0, STEV1
+          ldrb r1, [r0]
+          
+__end:    b __end   
+
+
+c) naloži 16-bitno vrednost 0xF123 v register R1
+
+          .text
+
+STEV1:    .hword 0xF123
+
+          .align
+          .global __start
+__start:
+              
+          adr r0, STEV1
+          ldrh r1, [r0]
+          
+__end:    b __end   
+
+Naloge rešite s posrednim (baznim) naslavljanjem brez odmika preko registra R0.
+
+--------------------------------------------------------------------------------------------------------------
+
+3. Napišite zaporedje ukazov v zbirniku za procesor ARM, ki vrednost 32-bitne spremenljivke 
+STEV1 prepiše v 32-bitno spremenljivko STEV2. Nalogo rešite še za primer, če sta spremenljivki 
+STEV1 in STEV2 8-bitni oziroma 16-bitni. 
+
+Vse primere rešite s posrednim (baznim) naslavljanjem brez odmika preko registra R0.
+
+a) 32-bitni spremenljivki
+          .text
+
+STEV1:    .word 0x12345678
+STEV2:    .word 0x12121212
+
+          .align
+          .global __start
+__start:
+              
+          adr r0, STEV1
+          ldr r1, [r0]
+          adr r0, STEV2
+          ldr r2, [r0]
+          
+__end:    b __end   
+
+
+b) 16-bitni spremenljivki
+          .text
+
+STEV1:    .hword 0x12345678
+STEV2:    .hword 0x12121212
+
+          .align
+          .global __start
+__start:
+              
+          adr r0, STEV1
+          ldrh r1, [r0]
+          adr r0, STEV2
+          ldrh r2, [r0]
+          
+__end:    b __end  
+
+c) 8-bitni spremenljivki
+          .text
+
+STEV1:    .byte 0x12345678
+STEV2:    .byte 0x12121212
+
+          .align
+          .global __start
+__start:
+              
+          adr r0, STEV1
+          ldrb r1, [r0]
+          adr r0, STEV2
+          ldrb r2, [r0]
+          
+__end:    b __end   
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

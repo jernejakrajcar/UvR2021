@@ -1,0 +1,123 @@
+1. Napišite zaporedje ukazov v zbirniku za procesor ARM, ki izračuna izraz
+STEV1 = STEV2 + STEV3, pri čemer so STEV1, STEV2 in STEV3 32-bitne
+nepredznačene spremenljivke z začetnimi vrednostmi (določite jih s psevdoukazi):
+STEV2 = 7fffffff(16), STEV3 = 80000001(16). Za STEV1 le rezervirajte prostor.
+Razložite stanje zastavic Z, C, V in N po izvedbi ukaza za seštevanje.
+
+          .text
+
+STEV1:    .space 4
+STEV2:    .word 0x7fffffff
+STEV3:    .word 0x80000001
+
+          .align
+          .global __start
+__start:
+
+          adr r0, STEV2
+          ldr r1, [r0]
+
+          adr r0, STEV3
+          ldr r2, [r0]
+
+          adds r3, r1, r2
+          adr r0, STEV1
+          str r3, [r0]
+
+__end:    b __end
+
+---------- Stanje zastavic po ukazu za seštevanje:
+                  - N = 0, ker je 31. bit enak 0
+                  - Z = 1, ker je vrednost enaka 0
+                  - C = 1, ker je prišlo do prenosa
+                  - V = 0, ker ni prišlo do preliva
+
+---------- Kakšna je končna vrednost STEV1? Zakaj?
+                  - Končna vrednost je enaka 0, ker če seštejemo
+                      0x7fffffff in 0x80000001 -> dobimo 0
+
+-----------------------------------------------------------------------------------------------
+2. Napišite zaporedje ukazov v zbirniku za procesor ARM, ki izračuna izraz
+STEV2 = STEV2 + STEV3, pri čemer sta STEV2 in STEV3 32-bitni nepredznačeni
+spremenljivki z zacetnima vrednostma (dolocite ju s psevdoukazi):
+STEV2 = 0, STEV3 = 0xffffffff.
+
+          .text
+
+STEV2:    .word 0
+STEV3:    .word 0x7fffffff
+
+          .align
+          .global __start
+__start:
+
+          adr r0, STEV2
+          ldr r1, [r0]
+
+          adr r0, STEV3
+          ldr r2, [r0]
+
+          adds r1, r1, r2
+          adr r0, STEV2
+          str r1, [r0]
+
+__end:    b __end
+
+---------- Stanje zastavic po ukazu za seštevanje:
+                  - N = 0, ker je 31. bit enak 0
+                  - Z = 0, ker je vrednost različna od 0
+                  - C = 0, ker ni prišlo do prenosa
+                  - V = 0, ker ni prišlo do preliva
+
+---------- Kakšna je končna vrednost STEV1? Zakaj?
+                  - Končna vrednost je enaka 0x7fffffff, ker če seštejemo
+                      0x7fffffff in 0 -> logično, da dobimo 0x7fffffff
+
+
+-----------------------------------------------------------------------------------------------
+3. Kateri od naslednjih pogojnih skokov se bo izvršil, ce je stanje zastavic
+N=1, C=0, Z=0 in V=0?
+          N=1   |  C=0   |  Z=0   |   V=0
+a) bcc             ja
+b) bne                       ja
+c) bge     ne                          ne
+d) bls             ja
+e) bmi     ja
+f) bcs             ne
+g) blt     ja                          ja
+
+Izvršile se bodo zanke: a, b, d, e in g
+
+
+
+-----------------------------------------------------------------------------------------------
+4. Kateri od naslednjih programov se vedno vrtijo v zanki?
+a)
+zanka: movs r1, #127
+bne zanka
+
+Da, ker je z = 0.
+
+
+b)
+zanka: movs r1, #127
+beq zanka
+
+Ne, ker je z = 0.
+
+c)
+zanka: movs r1, #0
+beq zanka
+
+Da, ker je z = 1. Rezultat je 0.
+
+d)
+zanka: mov r1, #1
+cmp r1, #25
+bmi zanka
+
+(1 - 25 = -24) => Da, ker je N = 1.
+
+Primeri a, c in d so neskončne zanke.
+
+-----------------------------------------------------------------------------------------------
